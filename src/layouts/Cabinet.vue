@@ -135,6 +135,8 @@
 
 			<ModalProfile />
 			<ModalPinfl />
+			<ModalEditRecipient v-if="$route.name !== 'cabinetRecipients'" />
+
 		</div>
 	</div>
 </template>
@@ -167,6 +169,8 @@
 					this.$store.dispatch('getUserInfo')
 				)
 			}
+
+			this.getRecipients();
 
 			try {
 				await Promise.all(promises)
@@ -232,6 +236,32 @@
 						}
 					})
 			},
+			async getRecipients() {
+				try {
+					const recipients = await this.$store.dispatch('getRecipients')
+
+					if (recipients.length === 0) {
+						this.$bvModal.msgBoxOk('У вас нет получателя. Добавьте адрес получателя чтобы получить посылку.', {
+							title: 'Добавьте получателя',
+							okVariant: 'success',
+							okTitle: 'Добавить получателя',
+							headerClass: 'border-bottom-0',
+							footerClass: 'border-top-0',
+							centered: true,
+							noCloseOnBackdrop: true,
+							noCloseOnEsc: true,
+							headerBgVariant: 'warning',
+							footerBgVariant: 'light'
+						})
+							.then(() => {
+								this.$bvModal.show('modal-edit-recipient')
+							})
+
+					}
+				} catch (e) {
+					//this.loading = false
+				}
+			},
 			onResize() {
 				this.desktop = window.innerWidth >= desktopMinWidth
 			},
@@ -239,6 +269,7 @@
 		components: {
 			'ModalProfile': require('@/components/ModalProfile.vue').default,
 			'ModalPinfl': require('@/components/ModalPinfl.vue').default,
+			'ModalEditRecipient': require('@/components/ModalEditRecipient.vue').default,
 			'Support': require('@/components/Support.vue').default,
 			'Language': require('@/components/Language.vue').default,
 		},

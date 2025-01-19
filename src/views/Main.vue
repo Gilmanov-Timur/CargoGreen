@@ -114,6 +114,9 @@
 				orders: [],
 			}
 		},
+		async mounted() {
+			//await this.getRecipients();
+		},
 		beforeDestroy() {
 			this.$store.dispatch('cancelRequest')
 		},
@@ -140,6 +143,14 @@
 
 				} finally {
 					this.loading = false
+				}
+			},
+			async getRecipients() {
+				try {
+					const recipients = await this.$store.dispatch('getRecipients')
+					console.log(recipients)
+				} catch (e) {
+					//this.loading = false
 				}
 			},
 		},

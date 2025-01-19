@@ -1,7 +1,7 @@
 module.exports = {
 	runtimeCompiler: true,
 	productionSourceMap: false,
-	publicPath: process.env.NODE_ENV === 'production' ? '/' : '/',
+	publicPath: process.env.NODE_ENV === 'production' ? '/cg_cabinet/' : '/',
 	pwa: {
 		name: 'CargoGreen',
 		themeColor: '#21bf86',

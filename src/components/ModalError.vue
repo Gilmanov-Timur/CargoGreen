@@ -22,7 +22,7 @@
 		</template>
 		<template v-slot:modal-footer>
 			<div class="w-100" v-if="criticalError">
-				<b-button variant="info" class="float-left" href="https://greenpost.uz">
+				<b-button variant="info" class="float-left" href="https://cargogreen.uz">
 					Вернуться на сайт
 				</b-button>
 				<b-button variant="info" class="float-right" @click.prevent="onReload">

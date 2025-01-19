@@ -4,9 +4,9 @@ axios.defaults.headers.common['Content-Type'] = 'application/json'
 const registerToken = btoa(unescape(encodeURIComponent('default:dDhC54')))
 const authorization = token => ({'Authorization': 'Basic ' + (token ? token : localStorage.getItem('token'))})
 const baseUrl = process.env.NODE_ENV === 'production'
-	? '/GreenPost/' //prod
+	? '/GreenPost/hs/ws/' //prod
 	//? 'https://cors-anywhere.herokuapp.com/https://app.greenpost.uz/GreenPost/hs/ws/' //test
-	: '/api/GreenPost/'
+	: '/api/GreenPost/hs/ws/'
 
 const api = {
 	_request: null,

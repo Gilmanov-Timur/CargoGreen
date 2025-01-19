@@ -6,8 +6,15 @@
 			<div class="col mb-3">
 				<h2 class="mb-0">Получатели</h2>
 			</div>
-			<div class="col-auto mb-3">
-				<b-button size="lg" variant="success" @click.prevent="onAddRecipient">
+			<div
+				v-if="recipients.length === 0 && !loading"
+				class="col-auto mb-3"
+			>
+				<b-button
+					size="lg"
+					variant="success"
+					@click.prevent="onAddRecipient"
+				>
 					<b-icon icon="plus-circle"/> Добавить получателя
 				</b-button>
 			</div>
