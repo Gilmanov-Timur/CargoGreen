@@ -4,15 +4,15 @@
 			<div class="contacts-title">Отправка посылок</div>
 			<div class="contacts-contact">
 				<div class="my-1 my-md-0">
-					<a href="tel:+998946030090">
+					<a href="tel:+998943580090">
 						<b-icon icon="telephone-fill"/>
-						(94) 603-00-90
+						(94) 358-00-90
 					</a>
 				</div>
 				<div class="my-1 my-md-0">
-					<a href="https://t.me/greenpostuz" target="_blank">
+					<a href="https://t.me/cargogreenchilanzar" target="_blank">
 						<img src="@/assets/telegram.svg" width="16" height="16" alt="" />
-						@greenpostuz
+						@cargogreenchilanzar
 					</a>
 				</div>
 			</div>
@@ -21,15 +21,15 @@
 			<div class="contacts-title">Получение посылок</div>
 			<div class="contacts-contact">
 				<div class="my-1 my-md-0">
-					<a href="tel:+998946430090">
+					<a href="tel:+998940740090">
 						<b-icon icon="telephone-fill"/>
-						(94) 643-00-90
+						(94) 074-00-90
 					</a>
 				</div>
 				<div class="my-1 my-md-0">
-					<a href="https://t.me/greenpostasia" target="_blank">
+					<a href="https://t.me/cargogreenchilanzar" target="_blank">
 						<img src="@/assets/telegram.svg" width="16" height="16" alt="" />
-						@greenpostasia
+						@cargogreenchilanzar
 					</a>
 				</div>
 			</div>

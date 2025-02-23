@@ -92,78 +92,20 @@
 
 				<div class="form-row form-group">
 					<label for="form-region" class="col-5 col-form-label">
-						Регион <span class="text-danger">*</span>
+						Филиал <span class="text-danger">*</span>
 					</label>
 					<div class="col">
 						<b-form-select
 							id="form-region"
-							v-model="form.region"
-							:options="regionOptions"
-							required
-							@change="onRegionChange"
-						/>
-					</div>
-				</div>
-
-				<div class="form-row form-group">
-					<label for="form-district" class="col-5 col-form-label">
-						Район (Город) <span class="text-danger">*</span>
-					</label>
-					<div class="col">
-						<b-form-select
-							id="form-district"
-							v-model="form.district"
-							:options="districtOptions"
-							:disabled="!form.region"
-							required
-							@change="onDistrictChange"
-						/>
-					</div>
-				</div>
-
-				<div class="form-row form-group" v-if="form.region !== 'г. Ташкент' && cityOptions.length">
-					<label for="form-district" class="col-5 col-form-label">
-						Населенный пункт <span class="text-danger">*</span>
-					</label>
-					<div class="col">
-						<b-form-select
-							id="form-district"
-							v-model="form.city"
-							:options="cityOptions"
-							:disabled="!form.district"
+							v-model="form.pickupPoint"
+							:options="pickupOptions"
 							required
 						/>
+						<div class="pt-1">
+							{{ selectedPickupAddress }}
+						</div>
 					</div>
 				</div>
-
-				<div class="form-row form-group">
-					<label for="form-street" class="col-5 col-form-label">
-						Улица <span class="text-danger">*</span>
-					</label>
-					<div class="col">
-						<b-input id="form-street" v-model.trim="form.street" required />
-					</div>
-				</div>
-
-				<div class="form-row form-group">
-					<label for="form-house" class="col-5 col-form-label">
-						Дом <span class="text-danger">*</span>
-					</label>
-					<div class="col">
-						<b-input id="form-house" v-model.trim="form.house" required />
-					</div>
-				</div>
-
-				<div class="form-row form-group">
-					<label for="form-flat" class="col-5 col-form-label">
-						Квартира
-					</label>
-					<div class="col">
-						<b-input id="form-flat" v-model.trim="form.flat" />
-					</div>
-				</div>
-
-				<div class="mb-4"><span class="text-danger">*</span> - поля обязательные для заполнения</div>
 
 				<button type="submit" class="d-none" ref="submitButton" />
 			</b-form>
@@ -179,21 +121,16 @@
 </template>
 
 <script>
-	import addresses from '@/assets/addresses.json'
-
 	import {getBirthdateFromPinfl, isPinflCorrect} from '@/utils/functions'
+	import { pickupPoints } from "../utils/constants";
+	import { getPickupPointIndex } from "../utils/functions";
 	const formDefaultData = {
 		recipientId: '',
 		name: '',
 		passport: '',
 		pinfl: '',
 		phone: '',
-		region: '',
-		district: '',
-		city: '',
-		street: '',
-		house: '',
-		flat: '',
+		pickupPoint: '',
 	}
 	export default {
 		data() {
@@ -201,22 +138,7 @@
 				loading: false,
 				submitted: false,
 				form: structuredClone(formDefaultData),
-				regionOptions: [
-					{value: 'г. Ташкент', text: 'г. Ташкент'},
-					{value: 'Андижанская область', text: 'Андижанская область'},
-					{value: 'Бухарска область', text: 'Бухарска область'},
-					{value: 'Джизакская область', text: 'Джизакская область'},
-					{value: 'Кашкадарьинская область', text: 'Кашкадарьинская область'},
-					{value: 'Навоийская область', text: 'Навоийская область'},
-					{value: 'Наманганская область', text: 'Наманганская область'},
-					{value: 'Самаркандская область', text: 'Самаркандская область'},
-					{value: 'Сурхандарьинская область', text: 'Сурхандарьинская область'},
-					{value: 'Сырдарьинская область', text: 'Сырдарьинская область'},
-					{value: 'Ташкентская область', text: 'Ташкентская область'},
-					{value: 'Ферганская область', text: 'Ферганская область'},
-					{value: 'Хорезмская область', text: 'Хорезмская область'},
-					{value: 'Республика Каракалпакстан', text: 'Республика Каракалпакстан'},
-				],
+				pickupPoints: pickupPoints
 			}
 		},
 		props: ['selectedRecipient'],
@@ -225,20 +147,14 @@
 				this.resetForm()
 
 				if (this.selectedRecipient) {
+					const pickupPointIndex = getPickupPointIndex(this.selectedRecipient['Район'], this.selectedRecipient['Улица'], this.selectedRecipient['Дом']);
+
 					this.form.recipientId = this.selectedRecipient['Номер']
 					this.form.name = this.selectedRecipient['ФИО']
 					this.form.passport = this.selectedRecipient['СерияНомерПаспорта']
 					this.form.pinfl = this.selectedRecipient['ПИНФЛ']
 					this.form.phone = this.selectedRecipient['Телефон']
-					this.form.street = this.selectedRecipient['Улица']
-					this.form.house = this.selectedRecipient['Дом']
-					this.form.flat = this.selectedRecipient['Квартира'] || ''
-
-					if (this.selectedRecipient['Район']) {
-						this.form.region = this.selectedRecipient['Область']
-						this.form.district = this.selectedRecipient['Район']
-						this.form.city = this.selectedRecipient['Город']
-					}
+					this.form.pickupPoint = pickupPointIndex !== -1 ? pickupPointIndex : ''
 				}
 			},
 			onSubmit() {
@@ -255,16 +171,18 @@
 				this.$refs.submitButton.click()
 			},
 			async submitForm() {
+				const pickupPoint = this.pickupPoints[this.form.pickupPoint];
+
 				const formData = {
 					'ФИО': this.form.name,
 					'НомерПолучателя': this.form.recipientId,
 					'НомерСтраны': '000000001',
-					'Область': this.form.region,
-					'Район': this.form.district,
-					'Город': this.form.city,
-					'Улица': this.form.street,
-					'Дом': this.form.house,
-					'Квартира': this.form.flat,
+					'Область': 'г. Ташкент',
+					'Район': pickupPoint.district,
+					'Город': '',
+					'Улица': pickupPoint.street,
+					'Дом': pickupPoint.house,
+					'Квартира' : '',
 					'Телефон': this.form.phone,
 					'СерияНомерПаспорта': this.form.passport,
 					'ПИНФЛ': this.form.pinfl,
@@ -282,57 +200,29 @@
 					this.loading = false
 				}
 			},
-			onRegionChange() {
-				this.form.district = ''
-				this.form.city = ''
-			},
-			onDistrictChange() {
-				this.form.city = ''
-			},
 		},
 		computed: {
-			userId() {
-				return this.$store.getters.userInfo['ID']
-			},
 			isInternationalPassport() {
 				return this.form.passport.indexOf('FA') === 0
 			},
 			isPinflValid() {
 				return isPinflCorrect(this.form.pinfl)
 			},
-			districtOptions() {
-				if (this.form.region === 'г. Ташкент') {
-					return [
-						{value: 'Алмазарский р-н', text: 'Алмазарский р-н'},
-						{value: 'Бектемирский р-н', text: 'Бектемирский р-н'},
-						{value: 'Мирабадский р-н', text: 'Мирабадский р-н'},
-						{value: 'Мирзо-Улугбекский р-н', text: 'Мирзо-Улугбекский р-н'},
-						{value: 'Сергелийский р-н', text: 'Сергелийский р-н'},
-						{value: 'Учтепинский р-н', text: 'Учтепинский р-н'},
-						{value: 'Чиланзарский р-н', text: 'Чиланзарский р-н'},
-						{value: 'Шайхантахурский р-н', text: 'Шайхантахурский р-н'},
-						{value: 'Юнусабадский р-н', text: 'Юнусабадский р-н'},
-						{value: 'Яккасарайский р-н', text: 'Яккасарайский р-н'},
-						{value: 'Янгихаётский р-н', text: 'Янгихаётский р-н'},
-						{value: 'Яшнабадский р-н', text: 'Яшнабадский р-н'},
-					]
-				}
-
-				return Object.keys(addresses[this.form.region] || []).map(district => {
+			pickupOptions() {
+				return this.pickupPoints.map((point, index) => {
 					return {
-						value: district,
-						text: district,
+						value: index,
+						text: point.name
 					}
 				})
 			},
-			cityOptions() {
-				return (addresses[this.form.region]?.[this.form.district] || []).map(city => {
-					return {
-						value: city,
-						text: city,
-					}
-				})
-			}
+			selectedPickupAddress() {
+				const point = this.pickupPoints[this.form.pickupPoint]
+
+				if (point) {
+					return `${point.district}, ${point.street}, ${point.house}`
+				}
+			},
 		},
 	}
 </script>

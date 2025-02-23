@@ -1,3 +1,5 @@
+import { pickupPoints } from './constants';
+
 export function isPinflCorrect(pinfl) {
 	if (/^\d{14}$/.test(pinfl)) {
 		const gen = Number(pinfl[0]);
@@ -66,4 +68,10 @@ export function getBirthdateFromPinfl(pinfl) {
 	const birthDay = pinfl.substring(1, 3);
 
 	return birthYear + birthMonth + birthDay;
+}
+
+export function getPickupPointIndex(district, street, house) {
+	return pickupPoints.findIndex(point => {
+		return point.district === district && point.street === street && point.house === house;
+	})
 }

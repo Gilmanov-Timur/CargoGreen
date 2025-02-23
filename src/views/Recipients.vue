@@ -27,10 +27,9 @@
 					<th>ФИО</th>
 					<th>Номер телефона</th>
 					<th>Регион</th>
-					<th>Район (Город)</th>
-					<th>Населенный пункт</th>
+					<th>Район</th>
 					<th>Улица</th>
-					<th>Дом/квартира</th>
+					<th>Дом</th>
 					<th>Управление</th>
 				</tr>
 				<tr v-for="(recipient, index) of recipients" :key="recipient['Номер']">
@@ -39,9 +38,8 @@
 					<td>{{recipient['Телефон']}}</td>
 					<td>{{recipient['Область']}}</td>
 					<td>{{recipient['Район']}}</td>
-					<td>{{recipient['Город']}}</td>
 					<td>{{recipient['Улица']}}</td>
-					<td>{{recipient['Дом']}}{{recipient['Квартира'] ? ('-' + recipient['Квартира']) : ''}}</td>
+					<td>{{recipient['Дом']}}</td>
 
 					<td class="text-nowrap">
 						<b-button size="sm" variant="info" class="mx-1" @click.prevent="() => onEdit(recipient['Номер'])">

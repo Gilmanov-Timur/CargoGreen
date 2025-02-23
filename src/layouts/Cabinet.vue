@@ -135,13 +135,17 @@
 
 			<ModalProfile />
 			<ModalPinfl />
-			<ModalEditRecipient v-if="$route.name !== 'cabinetRecipients'" />
-
+			<ModalEditRecipient
+				v-if="$route.name !== 'cabinetRecipients'"
+				:selectedRecipient="recipientToEdit"
+			/>
 		</div>
 	</div>
 </template>
 
 <script>
+	import { getPickupPointIndex } from "../utils/functions";
+
 	const desktopMinWidth = 992
 
 	export default {
@@ -151,6 +155,7 @@
 				sidebarOpen: window.innerWidth >= desktopMinWidth,
 				desktop: window.innerWidth >= desktopMinWidth,
 				rightSidebar: false,
+				recipients: null,
 			}
 		},
 		async mounted() {
@@ -195,6 +200,11 @@
 			balance() {
 				return this.userInfo['Баланс'].toFixed(2)
 			},
+			recipientToEdit() {
+				if (this.recipients?.length === 1 && getPickupPointIndex(this.recipients[0]['Район'], this.recipients[0]['Улица'], this.recipients[0]['Дом']) === -1) {
+					return this.recipients[0]
+				}
+			}
 		},
 		methods: {
 			async logout() {
@@ -240,6 +250,8 @@
 				try {
 					const recipients = await this.$store.dispatch('getRecipients')
 
+					this.recipients = recipients;
+
 					if (recipients.length === 0) {
 						this.$bvModal.msgBoxOk('У вас нет получателя. Добавьте адрес получателя чтобы получить посылку.', {
 							title: 'Добавьте получателя',
@@ -257,6 +269,22 @@
 								this.$bvModal.show('modal-edit-recipient')
 							})
 
+					} else if (getPickupPointIndex(recipients[0]['Район'], recipients[0]['Улица'], recipients[0]['Дом']) === -1) {
+						this.$bvModal.msgBoxOk('У вас не указан филиал. Выберите филиал получателя чтобы получить посылку.', {
+							title: 'Выберите филиал',
+							okVariant: 'success',
+							okTitle: 'Выбрать филиал',
+							headerClass: 'border-bottom-0',
+							footerClass: 'border-top-0',
+							centered: true,
+							noCloseOnBackdrop: true,
+							noCloseOnEsc: true,
+							headerBgVariant: 'warning',
+							footerBgVariant: 'light'
+						})
+							.then(() => {
+								this.$bvModal.show('modal-edit-recipient')
+							})
 					}
 				} catch (e) {
 					//this.loading = false
