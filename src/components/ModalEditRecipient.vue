@@ -6,6 +6,7 @@
 		no-close-on-backdrop
 		header-close-label="Закрыть"
 		:title="selectedRecipient ? 'Редактирование получателя' : 'Добавить нового получателя'"
+		:hide-header-close="!selectedRecipient"
 		header-bg-variant="info"
 		header-text-variant="white"
 		footer-bg-variant="light"

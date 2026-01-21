@@ -33,10 +33,10 @@
 					</template>
 					<b-card-text>
 						<div>
-							<b>地址:</b> 广州市天河区龙洞街道龙湖山庄三巷六号101房 AVTO {{ userInfo['ID'] }}
+							<b>地址:</b> 广州市天河区龙洞街道龙湖山庄三巷7号富一层 AVTO {{ userInfo['ID'] }}
 						</div>
 						<div>
-							<b>收货人:</b> Cargo Green {{ userInfo['ID'] }}
+							<b>收货人:</b> Luyun {{ userInfo['ID'] }}
 						</div>
 						<div>
 							<b>邮政编码:</b> 510520
@@ -48,10 +48,10 @@
 						<hr />
 
 						<div>
-							<b>地址:</b> 广州市天河区龙洞街道龙湖山庄三巷六号101房 AVIA {{ userInfo['ID'] }}
+							<b>地址:</b> 广州市天河区龙洞街道龙湖山庄三巷7号富一层 AVIA {{ userInfo['ID'] }}
 						</div>
 						<div>
-							<b>收货人:</b> Cargo Green {{ userInfo['ID'] }}
+							<b>收货人:</b> Kongyun {{ userInfo['ID'] }}
 						</div>
 						<div>
 							<b>邮政编码:</b> 510520

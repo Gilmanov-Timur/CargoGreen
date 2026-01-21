@@ -268,8 +268,7 @@
 							.then(() => {
 								this.$bvModal.show('modal-edit-recipient')
 							})
-
-					} else if (getPickupPointIndex(recipients[0]['Район'], recipients[0]['Улица'], recipients[0]['Дом']) === -1) {
+					} else if (recipients.length === 1 && getPickupPointIndex(recipients[0]['Район'], recipients[0]['Улица'], recipients[0]['Дом']) === -1) {
 						this.$bvModal.msgBoxOk('У вас не указан филиал. Выберите филиал получателя чтобы получить посылку.', {
 							title: 'Выберите филиал',
 							okVariant: 'success',
