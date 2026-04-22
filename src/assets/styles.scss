@@ -14,8 +14,12 @@ button:empty {
 	display: none;
 }
 
-.pointer-events-none input {
+.pointer-events-none {
 	pointer-events: none;
+}
+
+.pointer-events-auto {
+	pointer-events: auto;
 }
 
 .cursor-pointer {
@@ -168,7 +172,7 @@ button:empty {
 
 .selected-orders {
 	z-index: 1;
-	bottom: 0;
+	bottom: 3rem;
 }
 
 @media (min-width: 768px) {
@@ -340,4 +344,21 @@ button:empty {
 
 .vs--open .vs__open-indicator {
 	transform: none;
+}
+
+.btn.loading {
+	color: transparent;
+	pointer-events: none;
+	user-select: none;
+
+	img {
+		opacity: 0;
+	}
+
+	.spinner {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		margin: -1rem 0 0 -1rem;
+	}
 }

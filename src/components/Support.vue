@@ -10,26 +10,9 @@
 					</a>
 				</div>
 				<div class="my-1 my-md-0">
-					<a href="https://t.me/cargogreenchilanzar" target="_blank">
+					<a href="https://t.me/cargogreenuz" target="_blank">
 						<img src="@/assets/telegram.svg" width="16" height="16" alt="" />
-						@cargogreenchilanzar
-					</a>
-				</div>
-			</div>
-		</div>
-		<div class="col-auto">
-			<div class="contacts-title">Получение посылок</div>
-			<div class="contacts-contact">
-				<div class="my-1 my-md-0">
-					<a href="tel:+998940740090">
-						<b-icon icon="telephone-fill"/>
-						(94) 074-00-90
-					</a>
-				</div>
-				<div class="my-1 my-md-0">
-					<a href="https://t.me/cargogreenchilanzar" target="_blank">
-						<img src="@/assets/telegram.svg" width="16" height="16" alt="" />
-						@cargogreenchilanzar
+						@cargogreenuz
 					</a>
 				</div>
 			</div>

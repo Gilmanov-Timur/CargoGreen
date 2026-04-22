@@ -29,6 +29,16 @@ const api = {
 		method: 'GET',
 		headers: authorization(),
 	}),
+	getDeliveryPoints: () => axios({
+		url: baseUrl + 'dtype',
+		method: 'GET',
+		headers: authorization(),
+	}),
+	getCurrencyCourse: () => axios({
+		url: baseUrl + 'currency',
+		method: 'GET',
+		headers: authorization(),
+	}),
 	getUserInfo: ({email: username, password, token} = {}) => {
 		if (username) {
 			return axios.get(baseUrl + 'userinfo', {
@@ -249,7 +259,15 @@ const api = {
 	},
 	isRequestCancelled(e) {
 		return axios.isCancel(e)
-	}
+	},
+	paymePayment(data) {
+		return axios({
+			url: baseUrl + 'paymepayment',
+			method: 'POST',
+			data: data,
+			headers: authorization(),
+		})
+	},
 }
 
 export default api

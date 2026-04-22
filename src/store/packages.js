@@ -9,6 +9,7 @@ export default {
 				const packages = (await api.getPackages(dateRange)).data
 				packages.forEach(pack => {
 					pack.timestamp = moment(pack['Дата'], 'DD.MM.YYYY hh:mm:ss').toDate().getTime()
+					pack.checked = false
 				})
 				return packages
 			} catch (e) {

@@ -15,7 +15,7 @@
 			>
 				<div class="d-flex flex-column h-100 py-3">
 					<div class="mb-3 text-center px-3">
-						<b-dropdown variant="dark">
+            <b-dropdown variant="dark" class="mb-2">
 							<template v-slot:button-content>
 								<div class="user-avatar">
 									<b-avatar round />
@@ -24,14 +24,8 @@
 									{{ userInfo['Фамилия'] }}
 									{{ userInfo['Имя'] }}
 								</div>
-								<div class="user-id mb-1 text-white">
+                <span class="text-white">
 									ID: {{ userInfo.ID }}
-								</div>
-								<span class="text-white">
-									{{ $t('balance') }}:
-									<span :class="{'text-danger': balance < 0, 'text-success': balance > 0}">
-										{{balance}}
-									</span>$
 								</span>
 							</template>
 							<b-dropdown-item-button @click.prevent="$bvModal.show('modal-profile')">
@@ -44,9 +38,26 @@
 								{{ $t('exit') }}
 							</b-dropdown-item-button>
 						</b-dropdown>
+
+            <div class="text-white">
+              {{ $t('balance') }}:
+              <span :class="{'text-danger': balance < 0, 'text-success': balance > 0}">
+                {{balance}}
+              </span>$
+            </div>
+
+            <b-button
+              v-if="balance < 0"
+              variant="info"
+              size="sm"
+              class="mt-2"
+              :to="{ name: 'cabinetPackages', query: { selectUnpaid: null } }"
+            >
+              Пополнить баланс
+            </b-button>
 					</div>
 
-					<b-nav vertical class="cabinet-nav">
+          <b-nav vertical class="cabinet-nav pb-5 pb-sm-0">
 						<b-nav-item to="/" active-class="active" exact>
 							<BIconHouseDoor/> {{ $t('main') }}
 						</b-nav-item>
@@ -144,8 +155,6 @@
 </template>
 
 <script>
-	import { getPickupPointIndex } from "../utils/functions";
-
 	const desktopMinWidth = 992
 
 	export default {
@@ -159,15 +168,15 @@
 			}
 		},
 		async mounted() {
-			const promises = []
+			const promises = [
+        this.$store.dispatch('getServiceInfo'),
+        this.$store.dispatch('getDeliveryPoints'),
+        this.$store.dispatch('getCurrencyCourse'),
+      ]
 
 			this.$nextTick(() => {
 				window.addEventListener('resize', this.onResize);
 			})
-
-			promises.push(
-				this.$store.dispatch('getServiceInfo')
-			)
 
 			if (!this.userInfo) {
 				promises.push(
@@ -201,7 +210,7 @@
 				return this.userInfo['Баланс'].toFixed(2)
 			},
 			recipientToEdit() {
-				if (this.recipients?.length === 1 && getPickupPointIndex(this.recipients[0]['Район'], this.recipients[0]['Улица'], this.recipients[0]['Дом']) === -1) {
+				if (this.recipients?.length === 1 && !this.recipients[0]['НомерУслугиПосылки']) {
 					return this.recipients[0]
 				}
 			}
@@ -252,8 +261,10 @@
 
 					this.recipients = recipients;
 
+          if (this.$route.name === 'cabinetRecipients') return;
+
 					if (recipients.length === 0) {
-						this.$bvModal.msgBoxOk('У вас нет получателя. Добавьте адрес получателя чтобы получить посылку.', {
+						this.$bvModal.msgBoxOk('У вас нет получателя. Добавьте получателя чтобы получить посылку.', {
 							title: 'Добавьте получателя',
 							okVariant: 'success',
 							okTitle: 'Добавить получателя',
@@ -268,11 +279,11 @@
 							.then(() => {
 								this.$bvModal.show('modal-edit-recipient')
 							})
-					} else if (recipients.length === 1 && getPickupPointIndex(recipients[0]['Район'], recipients[0]['Улица'], recipients[0]['Дом']) === -1) {
-						this.$bvModal.msgBoxOk('У вас не указан филиал. Выберите филиал получателя чтобы получить посылку.', {
-							title: 'Выберите филиал',
+					} else if (recipients.length === 1 && !recipients[0]['НомерУслугиПосылки']) {
+						this.$bvModal.msgBoxOk('У вас не указан адрес доставки. Укажите адрес чтобы получить посылку.', {
+							title: 'Адрес доставки',
 							okVariant: 'success',
-							okTitle: 'Выбрать филиал',
+							okTitle: 'Указать адрес',
 							headerClass: 'border-bottom-0',
 							footerClass: 'border-top-0',
 							centered: true,

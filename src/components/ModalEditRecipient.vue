@@ -91,22 +91,101 @@
 					</div>
 				</div>
 
-				<div class="form-row form-group">
-					<label for="form-region" class="col-5 col-form-label">
-						Филиал <span class="text-danger">*</span>
-					</label>
-					<div class="col">
-						<b-form-select
-							id="form-region"
-							v-model="form.pickupPoint"
-							:options="pickupOptions"
-							required
-						/>
-						<div class="pt-1">
-							{{ selectedPickupAddress }}
-						</div>
-					</div>
-				</div>
+        <hr />
+
+        <div class="form-group">
+          <label for="form-delivery-point">
+            Куда доставить <span class="text-danger">*</span>
+          </label>
+          <b-form-select
+            id="form-delivery-point"
+            v-model="form.deliveryPoint"
+            :options="deliveryPointOptions"
+            required
+          />
+        </div>
+
+        <div
+          v-if="form.deliveryPoint === 'Fillial'"
+          class="form-group"
+        >
+          <label for="filial-select">
+            Выберите филиал <span class="text-danger">*</span>
+          </label>
+          <b-form-select
+            id="filial-select"
+            v-model="form.filialCode"
+            :options="filialOptions"
+            required
+          />
+          <div v-if="selectedFilialAddress" class="pt-1">
+            {{ selectedFilialAddress }}
+          </div>
+        </div>
+
+        <div
+          v-if="form.deliveryPoint === 'Taskent'"
+          class="form-group"
+        >
+          <label for="delivery-address">
+            Введите адрес <span class="text-danger">*</span>
+          </label>
+          <b-input
+            id="delivery-address"
+            v-model="form.deliveryAddress"
+            required
+          />
+        </div>
+
+        <template v-if="form.deliveryPoint === 'Region'">
+          <div class="form-group">
+            <label for="region-select">
+              Выберите регион <span class="text-danger">*</span>
+            </label>
+            <b-form-select
+              id="region-select"
+              v-model="form.regionCode"
+              :options="regionOptions"
+              required
+              @change="form.pickupPointCode = null"
+            />
+          </div>
+
+          <div
+            v-if="form.regionCode"
+            class="form-group"
+          >
+            <label for="pickup-point-select">
+              Выберите пункт выдачи <span class="text-danger">*</span>
+            </label>
+            <b-form-select
+              id="pickup-point-select"
+              v-model="form.pickupPointCode"
+              :options="pickupPointOptions"
+              required
+            />
+            <div v-if="selectedPickupPointAddress" class="pt-1">
+              {{ selectedPickupPointAddress }}
+            </div>
+          </div>
+        </template>
+
+<!--				<div class="form-row form-group">-->
+<!--					<label for="form-region" class="col-5 col-form-label">-->
+<!--						Филиал <span class="text-danger">*</span>-->
+<!--					</label>-->
+<!--					<div class="col">-->
+<!--						<b-form-select-->
+<!--							id="form-region"-->
+<!--							v-model="form.pickupPoint"-->
+<!--							:options="pickupOptions"-->
+<!--							required-->
+<!--						/>-->
+<!--						<div class="pt-1">-->
+<!--							{{ selectedPickupAddress }}-->
+<!--						</div>-->
+<!--					</div>-->
+<!--				</div>-->
 
 				<button type="submit" class="d-none" ref="submitButton" />
 			</b-form>
@@ -123,15 +202,17 @@
 
 <script>
 	import {getBirthdateFromPinfl, isPinflCorrect} from '@/utils/functions'
-	import { pickupPoints } from "../utils/constants";
-	import { getPickupPointIndex } from "../utils/functions";
 	const formDefaultData = {
 		recipientId: '',
 		name: '',
 		passport: '',
 		pinfl: '',
 		phone: '',
-		pickupPoint: '',
+    deliveryPoint: null,
+    filialCode: null,
+    deliveryAddress: null,
+    regionCode: null,
+    pickupPointCode: null,
 	}
 	export default {
 		data() {
@@ -139,7 +220,6 @@
 				loading: false,
 				submitted: false,
 				form: structuredClone(formDefaultData),
-				pickupPoints: pickupPoints
 			}
 		},
 		props: ['selectedRecipient'],
@@ -148,14 +228,31 @@
 				this.resetForm()
 
 				if (this.selectedRecipient) {
-					const pickupPointIndex = getPickupPointIndex(this.selectedRecipient['Район'], this.selectedRecipient['Улица'], this.selectedRecipient['Дом']);
+          const deliveryCode = this.selectedRecipient['НомерУслугиПосылки'];
+          let deliveryPoint = this.deliveryPoints?.Taskent.code === deliveryCode ? 'Taskent' : null;
+
+          if (!deliveryPoint && deliveryCode) {
+            deliveryPoint = this.deliveryPoints?.Fillial.map(filial => filial.code).includes(deliveryCode)
+              ? 'Fillial'
+              : 'Region'
+          }
 
 					this.form.recipientId = this.selectedRecipient['Номер']
 					this.form.name = this.selectedRecipient['ФИО']
 					this.form.passport = this.selectedRecipient['СерияНомерПаспорта']
 					this.form.pinfl = this.selectedRecipient['ПИНФЛ']
 					this.form.phone = this.selectedRecipient['Телефон']
-					this.form.pickupPoint = pickupPointIndex !== -1 ? pickupPointIndex : ''
+					this.form.deliveryPoint = deliveryPoint
+
+          if (deliveryPoint === 'Taskent') {
+            this.form.deliveryAddress = this.selectedRecipient['АдресПосылки']
+          } else if (deliveryPoint === 'Fillial') {
+            this.form.filialCode = deliveryCode
+          } else {
+            const regionCode = this.deliveryPoints?.Region.find(region => region.data.map(item => item.code).includes(deliveryCode))?.code
+            this.form.regionCode = regionCode
+            this.form.pickupPointCode = deliveryCode
+          }
 				}
 			},
 			onSubmit() {
@@ -172,23 +269,32 @@
 				this.$refs.submitButton.click()
 			},
 			async submitForm() {
-				const pickupPoint = this.pickupPoints[this.form.pickupPoint];
-
 				const formData = {
 					'ФИО': this.form.name,
 					'НомерПолучателя': this.form.recipientId,
 					'НомерСтраны': '000000001',
-					'Область': 'г. Ташкент',
-					'Район': pickupPoint.district,
-					'Город': '',
-					'Улица': pickupPoint.street,
-					'Дом': pickupPoint.house,
-					'Квартира' : '',
+					// 'Область': 'г. Ташкент',
+					// 'Район': pickupPoint.district,
+					// 'Город': '',
+					// 'Улица': pickupPoint.street,
+					// 'Дом': pickupPoint.house,
+					// 'Квартира' : '',
 					'Телефон': this.form.phone,
 					'СерияНомерПаспорта': this.form.passport,
 					'ПИНФЛ': this.form.pinfl,
 					'ДатаРождения': getBirthdateFromPinfl(this.form.pinfl),
 				}
+
+        if (this.form.deliveryPoint === 'Taskent') {
+          formData['НомерУслугиПосылки'] = this.deliveryPoints?.Taskent.code;
+          formData['АдресПосылки'] = this.form.deliveryAddress?.trim();
+        } else if (this.form.deliveryPoint === 'Region') {
+          formData['НомерУслугиПосылки'] = this.form.pickupPointCode;
+          formData['АдресПосылки'] = this.selectedPickupPointAddress?.trim();
+        } else {
+          formData['НомерУслугиПосылки'] = this.form.filialCode;
+          formData['АдресПосылки'] = this.selectedFilialAddress?.trim();
+        }
 
 				this.loading = true
 
@@ -209,21 +315,51 @@
 			isPinflValid() {
 				return isPinflCorrect(this.form.pinfl)
 			},
-			pickupOptions() {
-				return this.pickupPoints.map((point, index) => {
-					return {
-						value: index,
-						text: point.name
-					}
-				})
-			},
-			selectedPickupAddress() {
-				const point = this.pickupPoints[this.form.pickupPoint]
+      deliveryPoints() {
+        return this.$store.getters.deliveryPoints
+      },
+      deliveryPointOptions() {
+        return [
+          {
+            text: 'До филиала',
+            value: 'Fillial',
+          },
+          {
+            text: 'По адресу г. Ташкент',
+            value: 'Taskent',
+          },
+          {
+            text: 'По областям Узбекистана',
+            value: 'Region',
+          },
+        ];
+      },
+      filialOptions() {
+        return this.deliveryPoints?.Fillial.map(filial => ({
+          text: filial.name,
+          value: filial.code
+        })) || []
+      },
+      selectedFilialAddress() {
+        return this.deliveryPoints?.Fillial.find(filial => filial.code === this.form.filialCode)?.address
+      },
+      regionOptions() {
+        return this.deliveryPoints?.Region.map(filial => ({
+          text: filial.name,
+          value: filial.code
+        })) || []
+      },
+      pickupPointOptions() {
+        const pickupPoints = this.deliveryPoints?.Region.find(region => region.code === this.form.regionCode)?.data
 
-				if (point) {
-					return `${point.district}, ${point.street}, ${point.house}`
-				}
-			},
+        return pickupPoints?.map(point => ({
+          text: point.name,
+          value: point.code
+        })) || []
+      },
+      selectedPickupPointAddress() {
+        return this.deliveryPoints?.Region.map(region => region.data).flat().find(point => point.code === this.form.pickupPointCode)?.address
+      }
 		},
 	}
 </script>

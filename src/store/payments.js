@@ -14,5 +14,16 @@ export default {
 				throw e
 			}
 		},
+		async paymePayment({commit}, formData) {
+			try {
+				const response = await api.paymePayment(formData)
+				return response.data
+			} catch (e) {
+				if (!axios.isCancel(e)) {
+					commit('setError', e)
+				}
+				throw e
+			}
+		},
 	}
 }

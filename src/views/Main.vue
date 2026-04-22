@@ -3,37 +3,14 @@
 		<Loader v-if="loading" />
 
 		<div class="row">
-			<div class="col-sm-auto">
-				<b-card class="order-search-form mb-3">
-					<template v-slot:header>
-						<div class="h3 mb-0">
-							{{ $t('track-order') }}
-						</div>
-					</template>
-					<b-card-text>
-						<b-form @submit.prevent="onSubmit">
-							<div class="form-group mb-0">
-								<b-input-group>
-									<b-input v-model.trim="track" :disabled="loading" :placeholder="$t('input-track-number')" required />
-									<b-input-group-append>
-										<b-button type="submit" variant="info" class="ml-1" :disabled="!track || loading">
-											{{ $t('track') }}
-										</b-button>
-									</b-input-group-append>
-								</b-input-group>
-							</div>
-						</b-form>
-					</b-card-text>
-				</b-card>
-			</div>
-			<div class="col-auto">
+			<div class="col">
 				<b-card class="mb-3">
 					<template v-slot:header>
-						<div class="h3 mb-0">{{ $t('your-china-address') }}</div>
+            <div class="h4 mb-0 mx-n2 mx-sm-0">{{ $t('your-china-address') }}</div>
 					</template>
-					<b-card-text>
+          <b-card-text class="mx-n2 mx-sm-0" style="font-size: 14px;">
 						<div>
-							<b>地址:</b> 广州市天河区龙洞街道龙湖山庄三巷7号富一层 AVTO {{ userInfo['ID'] }}
+							<b>地址:</b> 广州市天河区龙洞商贸城自编V108号 AVTO {{ userInfo['ID'] }}
 						</div>
 						<div>
 							<b>收货人:</b> Luyun {{ userInfo['ID'] }}
@@ -42,13 +19,13 @@
 							<b>邮政编码:</b> 510520
 						</div>
 						<div>
-							<b>手机号:</b> 17728037238
+							<b>手机号:</b> 13660551080
 						</div>
 
 						<hr />
 
 						<div>
-							<b>地址:</b> 广州市天河区龙洞街道龙湖山庄三巷7号富一层 AVIA {{ userInfo['ID'] }}
+							<b>地址:</b> 广州市天河区龙洞商贸城自编V108号 AVIA {{ userInfo['ID'] }}
 						</div>
 						<div>
 							<b>收货人:</b> Kongyun {{ userInfo['ID'] }}
@@ -57,12 +34,25 @@
 							<b>邮政编码:</b> 510520
 						</div>
 						<div>
-							<b>手机号:</b> 17728037238
+							<b>手机号:</b> 13660551080
 						</div>
 					</b-card-text>
 				</b-card>
 			</div>
 		</div>
+
+    <b-alert show class="px-2 px-sm-3">
+      <pre style="white-space: pre-line; font-size: 100%;" class="m-0">
+❗️ После добавления адреса на маркетплейс просим связаться с нами для проверки!
+✈️ Авиа 3-7 дней - 9,5$/кг (Отправка: Вторник, Пятница)
+🚛 Авто 20-30 дней - 5,5$/кг (Отправка: Суббота)
+📦 Минималка 100 грамм
+⚠️ Товары содержащие батарейки, жидкости, порошки, магниты, косметику и продукты питания можно отправлять только Авто.
+📍 Наши филиалы: Мирабад, Чиланзар, Алмазар, Юнусабад, Мирзо-Улугбек, Яшнабад
+🚚 Доставка по Узбекистану - 2 долл/шт посылку (0,1кг - 30 кг)
+💰 Габаритные и коммерческие товары тарифицируются отдельно!
+🔗 Более подробная информация на сайте <a href="https://cargogreen.uz" target="_blank">Cargogreen.uz</a></pre>
+    </b-alert>
 
 		<div v-if="searched">
 			<div class="table-responsive" v-if="orders.length">
